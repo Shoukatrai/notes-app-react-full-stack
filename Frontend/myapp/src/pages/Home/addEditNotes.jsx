@@ -8,9 +8,12 @@ const AddEditNotes = ({ onClose , noteData , type}) => {
   const [tags, setTags] = useState([])
   const [error, setError] = useState(null)
 
+  //EDIT NOTES
   const editNote = async () => {
 
   }
+
+  //ADD NOTES
 
   const addNewNote = async()=>{}
 
@@ -60,16 +63,19 @@ const AddEditNotes = ({ onClose , noteData , type}) => {
           placeholder='Content...'
           rows={10}
           value={content}
-          onChange={({ target }) => { setTitle(target.value) }}
-        >
-          {" "}
-        </textarea>
+          onChange={({ target }) => { setContent(target.value) }}
+          />
       </div>
 
-      <div className=''>
+      <div className='mt-3'>
         <label className='input-label text-red-400 uppercase '>Tags</label>
         <TagInput tags={tags} setTags={setTags}/>
       </div>
+
+    {error && <p className='text-red-500 text-xs pt-4 '>
+      {error}
+    </p> }
+
       <button className='btn-primary font-medium mt-5 p-3  ' onClick={handleAddNotes}>ADD</button>
 
     </div>
