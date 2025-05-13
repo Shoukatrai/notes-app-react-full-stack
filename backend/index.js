@@ -21,7 +21,10 @@ app.listen(PORT , ()=>console.log(`Server is running on ${PORT}`))
 
 // import Routes
 import authRouter from "./routes/auth.route.js"
+import noteRouter from "./routes/note.route.js"
+
 app.use("/api/auth" , authRouter)
+app.use("/api/note" , noteRouter)
 
 // error handling
 app.use((err , req , res , next)=>{
