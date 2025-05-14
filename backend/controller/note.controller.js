@@ -64,21 +64,48 @@ export const editNote = async (req, res, next) => {
       note.isPinned = isPinned;
     }
 
-    await note.save()
+    await note.save();
 
     res.status(201).json({
-        success: true,
-        message: "Note updated successfully",
-        note,
-    })
-    
-
-
-
-  } catch (error) {}
+      success: true,
+      message: "Note updated successfully",
+      note,
+    });
+  } catch (error) {
+    next(error); // Pass the error to the error-handling middleware
+  }
 };
 
+export const getAllNotes = async (req, res, next) => {
+  const userId = req.user.id;
+  try {
+    const notes = await Note.find({ userId: userId }).sort({ isPinned: -1 });
 
-export const getAllNotes = async(req , res , next)=>{
-    
-}
+    res.status(200).json({
+      success: true,
+      message: "All notes retrived successfully!",
+      notes,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteNote = async (req, res, next) => {
+  const noteId = req.params.noteId;
+  const note = await Note.findOne({ _id: noteId, userId: req.user.id.toString() });
+
+  if (!note) {
+    return next(errorHandler(404, "Note not Found!"));
+  }
+
+  try {
+    await Note.deleteOne({ _id: noteId, userId: req.user.id.toString() });
+    res.status(200).json({
+      success: true,
+      message: "Note deleted successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
