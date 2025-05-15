@@ -1,21 +1,27 @@
 import React, { useState } from 'react'
 import PasswordInput from '../../components/Input/passwordInput'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { validateEmail } from '../../utils/helper'
+import { useDispatch } from 'react-redux'
+import { signInFailure, signInStart, signInSuccess } from '../../redux/user/userSlice.js'
+import axios from 'axios'
 
 const Login = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
+  
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  const hanleLogin = async(e)=>{
+  const hanleLogin = async (e) => {
     e.preventDefault()
-    if(!validateEmail(email)){
+    if (!validateEmail(email)) {
       setError("Please Enter a valid email address")
       return
     }
 
-    if(!password){
+    if (!password) {
       setError("Please enter the password")
       return
     }
@@ -23,7 +29,23 @@ const Login = () => {
     setError("")
 
     //Login Api 
+    try {
+      dispatch(signInStart())
+      const res = await axios.post("http://localhost:3000/api/auth/signin", { email, password }, { withCredentials: true });
+
+      if(res.data.success === false){
+        console.log(res.data);
+        dispatch(signInFailure(data.message))
+      }
+
+      dispatch(signInSuccess(res.data))
+      navigate("/")
+    } catch (error) {
+      console.log(error);
+      dispatch(signInFailure(error.message))
+    }
   }
+
 
   return (
     <div className='flex items-center justify-center  mt-28'>
@@ -49,7 +71,7 @@ const Login = () => {
             Not Registered yet?{" "}
             <Link to={"/signup"} className='font-medium text-primary underline'>Create an account</Link>
           </p>
-        
+
         </form>
       </div>
     </div>
